@@ -120,6 +120,23 @@ mod tests {
     use super::*;
 
     #[test]
+    fn every_visible_hires_address_matches_the_folded_rows_on_both_pages() {
+        let mut timing = Timing::default();
+        let mut seen = std::collections::HashSet::new();
+        for y in 0..192u16 {
+            timing.v = 256 + y;
+            for column in 0..40u16 {
+                timing.h = 88 + column as u8;
+                let offset = (y % 8) * 1024 + ((y / 8) % 8) * 128 + (y / 64) * 40 + column;
+                assert_eq!(timing.address(false, true), 0x2000 + offset);
+                assert_eq!(timing.address(true, true), 0x4000 + offset);
+                assert!(seen.insert(timing.address(false, true)));
+            }
+        }
+        assert_eq!(seen.len(), 40 * 192);
+    }
+
+    #[test]
     fn crystal_network_has_65_cpu_cycles_and_912_ticks_per_line() {
         let mut timing = Timing::default();
         let mut starts = Vec::new();

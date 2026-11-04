@@ -170,19 +170,6 @@ fn text_pixels_follow_rom_glyphs_inverse_codes_and_page_selection() {
 }
 
 #[test]
-fn graphics_requests_fail_explicitly_until_text_is_selected() {
-    let mut machine = board(&[0xad, 0x50, 0xc0]);
-    advance(&mut machine, 2000);
-    assert!(machine.framebuffer().is_err());
-    machine.reset();
-    advance(&mut machine, 2000);
-    assert!(
-        machine.framebuffer().is_err(),
-        "reset must not reset board video latches"
-    );
-}
-
-#[test]
 fn empty_slots_and_empty_rom_sockets_read_live_scanner_data() {
     // Default RAM is zero. A missing ROM must float, not supply the ROM filler.
     let mut machine = board(&[

@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/emu198x/apple-ii/actions/workflows/ci.yml/badge.svg)](https://github.com/emu198x/apple-ii/actions/workflows/ci.yml)
 
-The Apple II family's first foundation: the **original NTSC revision-0 board**,
+The Apple II family's first machine: the **original NTSC revision-0 board**,
 with 48 KB fitted, running the original Monitor and Integer BASIC through the
 published `emu198x-mos-6502` core.
 
@@ -17,6 +17,10 @@ the second board needs it.
 - `PRINT 6*7` produces `42`; a stored `PRINT 7*8` program runs and lists.
 - 40×24 text on either page, interleaved display memory, inverse/flashing codes,
   and a 280×192 monochrome digital raster fetched from live RAM.
+- Lo-res, revision-0 hi-res and mixed text/graphics on either page, with a
+  separate 560×192 colour view. Hi-res ignores D7, as the original board does.
+- Original Integer BASIC graphics commands execute through the ROM; hi-res
+  RAM and switches can be selected with signed-address `POKE` commands.
 - Keyboard latch, mirrored reads, strobe acknowledgement and debugger-safe peeks.
 - Speaker toggles on reads and writes, including NMOS read-modify-write dummy
   writes, with raw 48 kHz samples and observable toggle edges.
@@ -27,11 +31,12 @@ The revision-0 constructor does not synthesize a power-on RESET circuit. Call
 `reset()` to press RESET. RAM and latch initialization is deterministic rather
 than a simulation of analogue power-up randomness.
 
-Graphics output returns an explicit error. Disk II, cassette transport, game
-peripherals, optional ROM cards, save states and native host integration belong
+Disk II, cassette transport, game peripherals, optional ROM cards, save states and native host integration belong
 to later milestones. Audio is a raw digital level, not a speaker/acoustic model.
 Text flashing uses a nominal 2 Hz presentation oscillator; its analogue circuit
-and revision-0 composite-video behaviour are not qualified. The external test
+has not been measured. Colour uses a reference four-bit square filter and
+nominal palette, not a measured analogue television model. Revision 0 retains
+colour burst in text, so its colour view includes text fringes. The external test
 character patterns have not been verified against an original 2513 mask ROM.
 
 ## Build and check
@@ -42,8 +47,8 @@ cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
 ```
 
-The firmware test is deliberately ignored in fixture-free CI. Explicitly asking
-for it without the inputs fails; a green ordinary test run is not boot evidence.
+The firmware tests are deliberately ignored in fixture-free CI. Explicitly asking
+for them without the inputs fails; a green ordinary test run is not boot evidence.
 
 ```sh
 export EMU198X_APPLE_II_ROM=/path/to/original-e000.rom
@@ -65,9 +70,11 @@ cargo run --example boot -- "$EMU198X_APPLE_II_ROM" "$EMU198X_APPLE_II_CHARS"
 
 It presses RESET, types Ctrl-B/Return and prints the text RAM. Each line from
 stdin is typed through the keyboard latch; the ROM executes it. EOF exits.
-An optional third argument exports the current digital raster as a new PPM
-file; an existing file is never overwritten. This console advances emulated
+An optional third argument exports the current monochrome raster as a new PPM
+file; append `--colour` for the 560×192 colour view. An existing file is never
+overwritten. The keyboard wait is bounded at one emulated second, allowing
+ROM operations such as `GR` to finish. This console advances emulated
 time while processing input, not in real time while stdin is idle.
 
 See [verification](docs/verification.md), [hardware sources](docs/hardware.md)
-and the [implementation plan](docs/plans/2026-11-04-original-apple-ii-foundation.md).
+and the [graphics plan](docs/plans/2026-11-04-revision-zero-graphics.md).

@@ -1,25 +1,27 @@
-//! Original NTSC revision-0 Apple II foundation: 48 KB, text, keyboard, speaker.
+//! Original NTSC revision-0 Apple II: 48 KB, text/graphics, keyboard, speaker.
 //!
 //! One call to [`AppleII::tick`] advances the 14M crystal once. All CPU,
 //! scanner, flash and audio timing derives from that clock. The CPU exposes
 //! its bus at PHI0's rising edge; the access completes at its RAM latch phase.
 //! No instructions are fast-forwarded and no firmware entry points are trapped.
 //!
-//! Reset is an explicit key action. Graphics output, expansion cards, cassette
+//! Reset is an explicit key action. Expansion cards, cassette
 //! transport and game peripherals are outside this slice. See the repository
 //! README for the qualified surface and external-firmware test command.
 
+mod colour;
 mod timing;
 mod video;
 
 pub use timing::MASTER_HZ;
-pub use video::{HEIGHT, WIDTH, text_address};
+pub use video::{COLOUR_WIDTH, HEIGHT, WIDTH, text_address};
 
 use emu198x_mos_6502::M6502;
 use std::error::Error;
 use std::fmt;
 
-/// Returned rather than presenting stale text pixels as graphics output.
+/// Legacy framebuffer error retained for source compatibility. All original
+/// board video modes now render, so [`AppleII::framebuffer`] returns `Ok`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct GraphicsNotImplemented;
 
@@ -142,14 +144,18 @@ impl AppleII {
         }
     }
 
-    /// Return the monochrome text raster. A graphics-mode request fails
-    /// explicitly instead of returning a misleading last text frame.
+    /// Return the 280×192 monochrome raster in any video mode. Each pixel
+    /// averages two 14M PICTURE samples; text and hi-res dots remain sharp.
+    /// The Result return type is retained for source compatibility.
     pub fn framebuffer(&self) -> Result<&[u32], GraphicsNotImplemented> {
-        if self.video.text {
-            Ok(&self.video.framebuffer)
-        } else {
-            Err(GraphicsNotImplemented)
-        }
+        Ok(&self.video.framebuffer)
+    }
+
+    /// Return the 560×192 ARGB32 colour presentation of the live PICTURE
+    /// signal, using the reference four-bit square filter and nominal palette.
+    /// Revision 0 has colour burst in text as well as graphics.
+    pub fn colour_framebuffer(&self) -> &[u32] {
+        &self.video.colour_framebuffer
     }
 
     /// Current text RAM, decoded into 24 rows of 40 printable characters.
@@ -253,6 +259,39 @@ impl AppleII {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn graphics_ram_writes_do_not_repaint_already_scanned_pixels() {
+        for hires in [false, true] {
+            let mut machine = AppleII::new([0; 8192], [0; 512]);
+            machine.access(0xc050, true, 0);
+            if hires {
+                machine.access(0xc057, true, 0);
+            }
+            let address = if hires { 0x2000 } else { 0x400 };
+            machine.access(address, false, 0xff);
+            let mut fetched = false;
+            for _ in 0..2000 {
+                let cell = machine.timing.visible_cell();
+                machine.tick();
+                if cell == Some((0, 0)) && machine.timing.h == 89 {
+                    fetched = true;
+                    break;
+                }
+            }
+            assert!(fetched);
+            machine.access(address, false, 0);
+            for _ in 0..14 {
+                machine.tick();
+            }
+            assert_eq!(machine.colour_framebuffer()[6], 0xffffffff);
+            assert_eq!(machine.framebuffer().expect("graphics")[3], 0xffffffff);
+            for _ in 0..240_000 {
+                machine.tick();
+            }
+            assert_eq!(machine.colour_framebuffer()[6], 0xff000000);
+        }
+    }
 
     #[test]
     fn scanner_holds_fetched_byte_until_next_pass_despite_later_ram_write() {

@@ -42,8 +42,7 @@ The following were read before writing timing or bus code:
 These are implementation precedents, not replacements for the primary sources.
 The clock equations and address mapping have reference-derived invariant tests;
 there has not yet been a full execution trace comparison against running MAME,
-MiSTer or an original board. Passing Integer BASIC is not Disk II or graphics
-qualification.
+MiSTer or an original board. Passing Integer BASIC alone is not Disk II qualification.
 
 The three external archive paths named by flagship RULES.md rule 25 were checked
 and are absent on this machine. No archived machine or CPU code was ported. The
@@ -52,7 +51,8 @@ qualification does not by itself qualify this board's wiring.
 
 ## Deliberately bounded approximations
 
-The framebuffer is normalized monochrome text, not analogue composite video.
+The monochrome framebuffer averages pairs of digital PICTURE samples. The
+colour framebuffer uses a four-bit square filter, not an analogue TV model.
 The nominal 2 Hz text flasher is scheduled from elapsed master-clock time; the
 real analogue oscillator's tolerance and phase have not been measured. Audio
 averages the digital speaker latch over actual elapsed crystal ticks, then
@@ -78,3 +78,31 @@ revision `ee0aed25f73c69d0245e86a2a5fccb3324c3056c`:
 SHA-256, original source URLs and sizes are retained in
 [`fixtures.json`](fixtures.json). ROM bytes are neither committed nor fetched
 by CI. Size checks alone do not authenticate firmware.
+
+## Graphics signal and presentation
+
+Sather ch.8 describes the PICTURE signal: text/hi-res hold each dot for two
+14M ticks, whereas lo-res circulates a four-bit nibble at 14M. Lo-res chooses
+the low nibble for the upper four scanlines and the high nibble for the lower
+four. Even bytes start at Q0; odd bytes start at Q2, compensating for the
+3.5 colour periods in each byte. Mixed mode selects text at lines 160–191.
+Appendix G and the video chapter distinguish revision 0: no hi-res D7 delay
+and no text colour-burst suppression. Later-board six-colour hi-res behaviour
+must not be introduced into this crate.
+
+The serializer is driven by live scanner latches. The decoder waits for two
+future PICTURE samples and retains context across bytes; blanking supplies the
+right-edge context. Neither framebuffer accessor re-reads RAM or advances time.
+
+The nominal palette and four-bit square filter follow MAME's
+`src/mame/apple/apple2video.cpp`, snapshot
+`9391e1eff80eb04abd58d48218a1d3b9643c1ea8`, composite colour mode 2:
+`render_line_pixel_window<1>` and `rotl4(w & 0x0f, x - 1)`. Its hi-res path
+also omits D7 delay on revision 0. See [BSD attribution](../THIRD_PARTY_NOTICES.md).
+The decoder is a reference-matching presentation choice; it does not model
+chroma/luma bandwidth, NTSC voltage levels, a television, or analogue ringing.
+
+`tools/reference-square-filter.cpp` retains the reference window and rotation
+functions. Its 64 window/phase cases and 560-sample boundary row are checked
+into the machine's `tests/fixtures/` directory. They qualify the decoder
+against those reference functions, not the entire emulator against running MAME.

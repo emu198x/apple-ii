@@ -18,3 +18,5 @@ jobs:
     uses: stevehill1981/198x-workflows/.github/workflows/rust-ci.yml@v1
     with:
       coverage-floor: 95
+      # Shared shell host audio and controller backends require these at build time.
+      linux-packages: pkg-config libasound2-dev libudev-dev

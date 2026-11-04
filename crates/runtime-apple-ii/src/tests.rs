@@ -331,13 +331,21 @@ fn original_rom_types_basic_through_the_shared_executor() {
         HeadlessSession::new_with_query_provider(m, profiles::FRAME_TICKS, AppleIIQueries);
     let script: HeadlessScript = serde_json::from_value(json!([
         {"action":"wait_for_boot","max_frames":120},
-        {"action":"type_string","text":"\u{2}\n10 PRINT 6*7\nRUN\n"},
+        {"action":"type_string","text":"\u{2}\n10 PRINT 6*7\n20 END\nRUN\n"},
         {"action":"wait_for_query_contains","path":"screen.text","needle":"42","max_frames":120}
     ]))
     .expect("script");
     script
         .execute(&mut session)
         .expect("BASIC prints 42 through shared executor");
+    assert!(
+        !session
+            .machine()
+            .machine()
+            .text_rows()
+            .join("\n")
+            .contains(" ERR")
+    );
     assert!(
         session
             .machine()

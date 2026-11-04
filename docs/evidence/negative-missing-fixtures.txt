@@ -1,0 +1,22 @@
+   Compiling emu198x-machine-apple-ii-rev0-ntsc v0.1.0 (/Users/stevehill/Projects/198x/Emu198x/apple-ii/crates/machine-apple-ii-rev0-ntsc)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+     Running tests/rom_boot.rs (target/debug/deps/rom_boot-ca76f0cb2f08bd15)
+
+running 1 test
+test original_monitor_enters_integer_basic_and_runs_programs ... FAILED
+
+failures:
+
+---- original_monitor_enters_integer_basic_and_runs_programs stdout ----
+
+thread 'original_monitor_enters_integer_basic_and_runs_programs' (238111969) panicked at crates/machine-apple-ii-rev0-ntsc/tests/rom_boot.rs:34:58:
+set EMU198X_APPLE_II_ROM: NotPresent
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    original_monitor_enters_integer_basic_and_runs_programs
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test rom_boot`

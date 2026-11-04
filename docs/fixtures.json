@@ -1,0 +1,18 @@
+{
+  "repository": "https://github.com/whscullin/apple2js",
+  "revision": "ee0aed25f73c69d0245e86a2a5fccb3324c3056c",
+  "files": {
+    "original-e000.rom": {
+      "url": "https://raw.githubusercontent.com/whscullin/apple2js/ee0aed25f73c69d0245e86a2a5fccb3324c3056c/js/roms/system/original.ts",
+      "source_bytes": 12288,
+      "bytes": 8192,
+      "sha256": "831989e3efdedd7e8dbd217f25c7101ee2d6e5aaee3de0e0f2e67b80f59fa096"
+    },
+    "characters-64.bin": {
+      "url": "https://raw.githubusercontent.com/whscullin/apple2js/ee0aed25f73c69d0245e86a2a5fccb3324c3056c/js/roms/character/apple2_char.ts",
+      "source_bytes": 2048,
+      "bytes": 512,
+      "sha256": "3167b9cb5942db979fd092d20d153a4e3f1de94fa6832691986c6b91a204e478"
+    }
+  }
+}

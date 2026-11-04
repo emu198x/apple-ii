@@ -1,0 +1,31 @@
+   Compiling emu198x-machine-apple-ii-rev0-ntsc v0.1.0 (/Users/stevehill/Projects/198x/Emu198x/apple-ii/crates/machine-apple-ii-rev0-ntsc)
+warning: unused variable: `h`
+  --> crates/machine-apple-ii-rev0-ntsc/src/timing.rs:58:13
+   |
+58 |             h,
+   |             ^ help: try ignoring the field: `h: _`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `emu198x-machine-apple-ii-rev0-ntsc` (lib test) generated 1 warning (run `cargo fix --lib -p emu198x-machine-apple-ii-rev0-ntsc --tests` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.27s
+     Running unittests src/lib.rs (target/debug/deps/emu198x_machine_apple_ii_rev0_ntsc-122d76e92b537e40)
+
+running 1 test
+test timing::tests::crystal_network_has_65_cpu_cycles_and_912_ticks_per_line ... FAILED
+
+failures:
+
+---- timing::tests::crystal_network_has_65_cpu_cycles_and_912_ticks_per_line stdout ----
+
+thread 'timing::tests::crystal_network_has_65_cpu_cycles_and_912_ticks_per_line' (238111786) panicked at crates/machine-apple-ii-rev0-ntsc/src/timing.rs:142:9:
+assertion failed: line_edges.len() > 500
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    timing::tests::crystal_network_has_65_cpu_cycles_and_912_ticks_per_line
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`

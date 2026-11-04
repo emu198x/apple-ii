@@ -218,3 +218,52 @@ Disabling the host Q3 event fails the CPU-driven latch invariant (`0` instead
 of `$42`); [negative clock output](evidence/negative-disk-clock.txt) is retained.
 The event was restored before final verification. Coverage is a test-reach
 measure, not hardware-accuracy evidence.
+
+## Shared scripts and MCP — 4 November 2026
+
+The new runtime and suite `emu198x-apple-ii` binary use `emu198x-shell` 0.44.2.
+The family supplies hardware primitives; the standard launcher and executor
+supply scripts and newline-delimited JSON-RPC stdio MCP. Neither mode has a
+separate Apple II control loop.
+
+Fixture-free family checks: fmt, Clippy with warnings denied, 33 tests and
+97.68% workspace line coverage (floor 95%). Five external-fixture tests are
+ignored by default. The new runtime test explicitly requested with the ROM and
+glyph variables enters Integer BASIC and runs `10 PRINT 6*7` / `RUN`, checking
+a standalone `42` row. Existing fixture identities above remain authoritative.
+
+The suite's `crates/emu198x-apple-ii/tests/control.rs` exercises the actual
+process. Two fixture-free tests compare script observations with MCP tool
+observations for exact ticks, queries, RAM writes/reads, disassembly and steps;
+they check tool registration, bounded failure in both modes, missing firmware
+failure in both modes, and a PNG with a 560×192 IHDR.
+
+Both explicit external process tests passed:
+
+- `original_basic_runs_through_scripts_and_live_mcp`: identical observations
+  from Monitor boot, Ctrl-B/Return, `10 PRINT 6*7` and `RUN`; standalone `42`.
+- `dos_work_disk_exports_then_reloads_in_a_fresh_mcp_process`: script-mounted
+  writable DOS System Master copy, `C600G`, DOS VERSION 3.3 wait, motor-off wait,
+  `10 PRINT 6*7`, `20 END`, `SAVE DISKTEST`, positive disk write count and WOZ
+  export. Fresh MCP process mounts that export read-only, boots, loads and runs
+  DISKTEST and prints standalone `42`. SAVE reports WRITE PROTECTED with both
+  bit-write counters zero. Original archive bytes remain identical. A second
+  export to an existing destination fails and preserves all destination bytes.
+
+Reproduce in the suite repository with these absolute fixture environment paths:
+
+```sh
+export EMU198X_APPLE_II_ROM="$PWD/../roms/apple-ii/original-e000.rom"
+export EMU198X_APPLE_II_CHARS="$PWD/../roms/apple-ii/characters-64.bin"
+export EMU198X_DISK_II_P5="$PWD/../roms/apple-ii/disk-ii-p5-original.bin"
+export EMU198X_DISK_II_P6="$PWD/../roms/apple-ii/disk-ii-p6.bin"
+export EMU198X_APPLE_II_DOS="$PWD/../roms/apple-ii/DOS 3.3 System Master.woz"
+cargo test -p emu198x-apple-ii -- --ignored
+```
+
+The family runtime's external test uses the first two variables and runs with
+`cargo test -p emu198x-runtime-apple-ii original_rom -- --ignored`.
+These tests fail if requested without fixtures. Temporary process fixtures and
+exports are removed by their test guards. No proprietary bytes are committed.
+Snapshot/restore remain explicit unsupported operations; a native window,
+later boards, cassette and protected-flux qualification are still future work.

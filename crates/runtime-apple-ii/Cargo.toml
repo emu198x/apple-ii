@@ -1,0 +1,17 @@
+[package]
+name = "emu198x-runtime-apple-ii"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Apple II runtime for shared JSON scripts and MCP control"
+
+[dependencies]
+emu198x-shell = "0.44.2"
+serde_json = "1"
+emu198x-machine-apple-ii-rev0-ntsc = { path = "../machine-apple-ii-rev0-ntsc", version = "0.1.0" }
+emu198x-apple-disk-ii = "0.1.0"
+format198x-apple-ii-woz = "0.1.0"
+
+[lints]
+workspace = true

@@ -6,8 +6,9 @@ The Apple II family's first machine: the **original NTSC revision-0 board**,
 with 48 KB fitted, running the original Monitor and Integer BASIC through the
 published `emu198x-mos-6502` core.
 
-This is a machine library and a headless console example. It is not yet a native
-window or an installable Emu198x suite emulator. II+, IIe and subsequent boards
+The machine and runtime are published libraries. The Emu198x suite supplies
+`emu198x-apple-ii`, a headless runner with shared JSON scripts and stdio MCP.
+A native window is a later milestone. II+, IIe and subsequent boards
 will have their own machine crates here; shared hardware will be extracted when
 the second board needs it.
 
@@ -103,3 +104,31 @@ Writes normalize transition intervals to bit cells. Exact flux/splice timing,
 copy-protected writes, acceleration and head settling remain unqualified.
 Only 5.25-inch WOZ2 bitstreams are accepted; flux and 3.5-inch images fail
 explicitly. See [disk qualification](docs/verification.md#disk-ii).
+
+## Shared scripts and MCP
+
+The `emu198x-runtime-apple-ii` crate implements the shared shell contracts.
+Both control modes use the same executor: typing, exact crystal ticks, native
+frames, bounded waits, text/state queries, CPU inspection, RAM writes,
+disassembly, instruction stepping, PNG/audio captures and WOZ mount/export.
+No machine-specific script dialect or MCP loop is needed.
+
+The suite binary requires explicit `--rom` and `--characters` paths. Add both
+`--p5` and `--p6` for a slot-6 Disk II, and `--disk` / `--disk-2` for read-only
+startup media. Use shared `load_media` with `writable: true` for an in-memory
+work disk; `export_media` writes a new path and refuses existing destinations.
+Wait for `disk.motor_on = false` before replacing, ejecting or exporting disks.
+
+`screen.text` exposes display RAM decoded as text, including in graphics modes.
+`boot.detected` means a Monitor `*` or BASIC `>` prompt is visible; it does not
+claim that DOS or an arbitrary program has booted. Use a specific text wait
+for those workloads. Keyboard bytes wait for the ROM's real strobe acknowledgement
+in a bounded 256-byte queue. Lowercase maps to uppercase.
+
+Both reset kinds press hardware RESET and preserve RAM, video latches and disks;
+they clear pending host input and stop the Disk II motor. Time and completed
+instruction counts remain monotonic. Save states, register editing, memory/IO
+watches and arbitrary program injection are not implemented.
+
+See [control plan](docs/plans/2026-11-04-shared-control.md) and
+[verification](docs/verification.md) for scope, fixtures and end-to-end checks.

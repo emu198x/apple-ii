@@ -291,20 +291,24 @@ above, the macOS native window was exercised through UI automation:
   SYSTEM MASTER`. `PRINT "NATIVE UI"` then displayed `NATIVE UI`.
 
 The host-layout character path was exercised with `*`, quotes, commas, equals
-and negative numbers. The deliberate left-Alt/Option target-Ctrl chord remains
-a narrower qualification: adapter tests verify its names produce keyboard
-latch byte `0x82` for Ctrl+B, and shared UI tests cover physical modifier
-ownership. The native automation tool did not deliver a physical Alt event.
-A temporary trace showed `KeyB Character("∫")` with aggregate `ALT`, then its
-release, without `AltLeft` down/up. The original chord therefore did not enter
-BASIC in that automated check. Winit's macOS `update_modifiers` only emits
-physical modifier input for a nonzero-keycode `flagsChanged` event. No fallback
-that conflates left Alt with right Alt/AltGr was introduced. The trace was
-removed; physical-keyboard Alt+B has not been tested by a person.
+and negative numbers. A person verified physical left Option+B followed by
+Return enters Integer BASIC; `PRINT 6*7` visibly produced `42`. Temporary input
+tracing confirmed actual `AltLeft` down/up and `KeyB` events. The earlier UI
+automation attempt supplied aggregate ALT without physical Alt events, so it
+cannot substitute for this hands-on check. All input tracing was removed.
+
+The uncleared startup screen was confusing in the hands-on check. Repeated
+inverse glyphs occupied the untouched display RAM, while BASIC input and `42`
+were visible below them. Typing `CALL -936` at the BASIC prompt invoked the
+ROM's screen-clear routine and left a clean `>` prompt. Coloured edges remain
+in this revision-0 nominal composite presentation: the board does not suppress
+text colour burst. See [hardware.md](hardware.md#graphics-signal-and-presentation)
+for the reference and the decoder's limits. This is not a measurement of a
+physical television's text appearance.
 
 Authored-firmware adapter tests check encoded keyboard latch bytes, video
 dimensions/bytes, varying 48 kHz mono audio packets, crystal-derived pacing
-and nonzero RAM/time retention across reset. All three pass; the two existing
+and nonzero RAM/time retention across reset. All five pass; the two existing
 fixture-free process tests pass with UI enabled and disabled. All 42 shared UI
 unit tests pass, as do both external-ROM script/MCP tests. The first external
 invocation used relative fixture paths and failed with `No such file or
@@ -314,6 +318,30 @@ pass for both feature configurations. Family tests and CI pass, including the
 
 The sandboxed launch reported `OSStatus: 560947818` opening the default audio
 device. The desktop-access launch opened it without that warning. Packet
-delivery and device opening are verified separately; audible sound was not
-measured. Save states remain unsupported, including through the inherited
-State menu. No later-board or analogue fidelity claim follows from this check.
+delivery and device opening are verified separately; smooth audible playback
+is not established. The follow-up below records the reported crackling. Save
+states remain unsupported, including through the inherited State menu. No later-board or analogue fidelity claim follows from this check.
+
+### Native audio follow-up
+
+The hands-on check reported crackling sound. Temporary callback counters
+confirmed queue underruns in the unoptimised debug binary: requests for 96,256
+interleaved samples sometimes contained thousands of missing samples, which
+were replaced with zero. Opening the output device and checking the generated
+waveform did not establish smooth playback. The native launch instructions
+now use an optimised release build.
+
+Two additional adapter tests check that releasing target Ctrl restores an
+ordinary `B` after firmware acknowledgement, and that an authored speaker
+delay loop generates approximately 1 kHz at 48 kHz with finite bounded samples
+and a sample count matching elapsed master ticks. Replacing its speaker access
+with unrelated I/O makes the tone test fail with `tone is 0 Hz`; restoring the
+access passes. Neither test establishes physical audibility.
+
+The optimised release build also showed intermittent queue underruns, despite
+many one-second windows with zero missing samples. For example, an idle
+96,256-sample window missed 480 samples, and another missed 6,590. Debug
+optimisation alone does not resolve the playback defect; the person repeated
+the listening check and still reported crackling. No buffering or
+hardware/filter change is included in this verification change; native audio
+remains an open defect pending a shared playback-buffer design.

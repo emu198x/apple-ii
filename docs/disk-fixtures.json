@@ -1,0 +1,42 @@
+{
+  "fixtures": [
+    {
+      "file": "disk-ii-p5-original.bin",
+      "size": 256,
+      "sha256": "de1e3e035878bab43d0af8fe38f5839c527e9548647036598ee6fe7ec74d2a7d",
+      "crc32": "ce7144f6",
+      "source": "https://raw.githubusercontent.com/JoaoPagotto/Apple-Disk-II-PROM-Verify/a033dc1d99ce63147d3c8cec16c4053b09698189/ROMS/341-0027.BIN"
+    },
+    {
+      "file": "disk-ii-p6.bin",
+      "size": 256,
+      "sha256": "e5e30615040567c1e7a2d21599681f8dac820edbdcda177b816a64d74b3a12f2",
+      "crc32": "b72a2c70",
+      "source": "https://raw.githubusercontent.com/JoaoPagotto/Apple-Disk-II-PROM-Verify/a033dc1d99ce63147d3c8cec16c4053b09698189/ROMS/341-0028.BIN"
+    },
+    {
+      "file": "DOS 3.3 System Master.woz",
+      "size": 234496,
+      "sha256": "17507a18412ce0991b751b2ae0ec288775e1f349f4944e1bb614e848a845d0f6",
+      "crc32": "74ea1324",
+      "source": "https://mirrors.apple2.org.za/ftp.apple.asimov.net/images/masters/DOS%203.3%20System%20Master.woz"
+    },
+    {
+      "file": "wozardry-valid2.woz",
+      "size": 1536,
+      "sha256": "0ece390e91483fa1488b663070c182191c3525910c4188d9a11116fca720bc5f",
+      "crc32": "fee91034",
+      "source": "https://raw.githubusercontent.com/a2-4am/wozardry/80d1f6d9d02ba93bbe18e8e5bff3034d755c984f/test/valid2.woz"
+    },
+    {
+      "file": "authored-diagnostic.woz",
+      "size": 235204,
+      "sha256": "30945a21258f602c6d82aecb7693ca77bc71c44c13832bf2f2c744eb035659ba",
+      "crc32": "1ace2bb5",
+      "source": "Authored sector from apple-ii/tools/diagnostic-disk.py; dsk2woz2 97a2100285ab935f96708efb7e2c1a809c9fd441"
+    }
+  ],
+  "unused": [
+    "disk-ii-p5.bin is CRC 833256ff; despite its source label it is not the ce7144f6 P5 used by this qualification."
+  ]
+}

@@ -24,6 +24,8 @@ the second board needs it.
 - Keyboard latch, mirrored reads, strobe acknowledgement and debugger-safe peeks.
 - Speaker toggles on reads and writes, including NMOS read-modify-write dummy
   writes, with raw 48 kHz samples and observable toggle edges.
+- Optional slot-6 Disk II: real P5/P6 PROMs, two bitstream drives and WOZ 2.
+  DOS 3.3 boots and catalogs; writable work copies save and reload programs.
 - A single 14.31818 MHz timebase, separate scanner/CPU RAM phases and the long
   cycle: 65 CPU periods / 912 crystal ticks per line, 262 lines per frame.
 
@@ -31,7 +33,7 @@ The revision-0 constructor does not synthesize a power-on RESET circuit. Call
 `reset()` to press RESET. RAM and latch initialization is deterministic rather
 than a simulation of analogue power-up randomness.
 
-Disk II, cassette transport, game peripherals, optional ROM cards, save states and native host integration belong
+Cassette transport, game peripherals, optional ROM cards, save states and native host integration belong
 to later milestones. Audio is a raw digital level, not a speaker/acoustic model.
 Text flashing uses a nominal 2 Hz presentation oscillator; its analogue circuit
 has not been measured. Colour uses a reference four-bit square filter and
@@ -78,3 +80,26 @@ time while processing input, not in real time while stdin is idle.
 
 See [verification](docs/verification.md), [hardware sources](docs/hardware.md)
 and the [graphics plan](docs/plans/2026-11-04-revision-zero-graphics.md).
+
+## Disk II
+
+Install the separately published `emu198x-apple-disk-ii` controller with
+`install_disk_ii`. `disk::mount` adapts a validated `format198x-apple-ii-woz`
+image. Archive mounts are protected; `disk::export` returns updated bytes for a
+new file. The libraries never open or overwrite a source path.
+
+The headless example enters `C600G` through the original Monitor:
+
+```sh
+cargo run --release --example disk_boot -- "$EMU198X_APPLE_II_ROM" "$EMU198X_APPLE_II_CHARS" "$EMU198X_DISK_II_P5" "$EMU198X_DISK_II_P6" "$EMU198X_APPLE_II_DOS"
+```
+
+Append `--work-copy /new/path.woz` to create an explicitly writable copy. This
+clears the protection tab on the memory copy and exports at EOF with overwrite
+prevention. Each input line is typed through the keyboard. DOS `CATALOG` may
+wait for a key between pages. This example advances time while handling input.
+
+Writes normalize transition intervals to bit cells. Exact flux/splice timing,
+copy-protected writes, acceleration and head settling remain unqualified.
+Only 5.25-inch WOZ2 bitstreams are accepted; flux and 3.5-inch images fail
+explicitly. See [disk qualification](docs/verification.md#disk-ii).

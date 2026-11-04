@@ -5,17 +5,19 @@
 //! its bus at PHI0's rising edge; the access completes at its RAM latch phase.
 //! No instructions are fast-forwarded and no firmware entry points are trapped.
 //!
-//! Reset is an explicit key action. Expansion cards, cassette
+//! Reset is an explicit key action. An optional Disk II occupies slot 6. Cassette
 //! transport and game peripherals are outside this slice. See the repository
 //! README for the qualified surface and external-firmware test command.
 
 mod colour;
+pub mod disk;
 mod timing;
 mod video;
 
 pub use timing::MASTER_HZ;
 pub use video::{COLOUR_WIDTH, HEIGHT, WIDTH, text_address};
 
+use emu198x_apple_disk_ii::DiskII;
 use emu198x_mos_6502::M6502;
 use std::error::Error;
 use std::fmt;
@@ -56,6 +58,7 @@ pub struct TickOutput {
 /// Original NTSC revision-0 board, with 48 KB fitted and no cards installed.
 pub struct AppleII {
     cpu: M6502,
+    disk_ii: Option<DiskII>,
     ram: Vec<u8>,
     rom: [u8; 8192],
     timing: timing::Timing,
@@ -83,6 +86,7 @@ impl AppleII {
         cpu.rdy = false;
         Self {
             cpu,
+            disk_ii: None,
             ram: vec![0; 0xc000],
             rom,
             timing: timing::Timing::default(),
@@ -103,8 +107,22 @@ impl AppleII {
     /// Press and release the RESET key. RAM, scanner phase and board latches
     /// survive; the 6502 runs its actual reset sequence on subsequent clocks.
     pub fn reset(&mut self) {
+        if let Some(card) = self.disk_ii.as_mut() {
+            card.reset();
+        }
         self.cpu.rdy = true;
         self.cpu.reset();
+    }
+
+    /// Fit a Disk II card in slot 6, returning any previous card with its media.
+    pub fn install_disk_ii(&mut self, card: DiskII) -> Option<DiskII> {
+        self.disk_ii.replace(card)
+    }
+    pub fn disk_ii(&self) -> Option<&DiskII> {
+        self.disk_ii.as_ref()
+    }
+    pub fn disk_ii_mut(&mut self) -> Option<&mut DiskII> {
+        self.disk_ii.as_mut()
     }
 
     /// Present one encoded 7-bit keyboard character and assert its strobe.
@@ -139,6 +157,15 @@ impl AppleII {
         match address {
             0x0000..=0xbfff => self.ram[usize::from(address)],
             0xc000..=0xc00f => self.keyboard,
+            0xc600..=0xc6ff if self.disk_ii.is_some() => self
+                .disk_ii
+                .as_ref()
+                .map_or(self.floating_bus, |card| card.rom(address as u8)),
+            0xc0e0..=0xc0ef => self
+                .disk_ii
+                .as_ref()
+                .and_then(|card| card.data(address as u8))
+                .unwrap_or(self.floating_bus),
             0xe000..=0xffff => self.rom[usize::from(address - 0xe000)],
             _ => self.floating_bus,
         }
@@ -198,6 +225,15 @@ impl AppleII {
         }
         if events.cpu_start {
             self.cpu.tick();
+            if self.cpu.rdy
+                && (0xc0e0..=0xc0ef).contains(&self.cpu.addr)
+                && let Some(card) = self.disk_ii.as_mut()
+            {
+                card.select(self.cpu.addr as u8, (!self.cpu.rw).then_some(self.cpu.data));
+            }
+        }
+        if let Some(card) = self.disk_ii.as_mut() {
+            card.tick(events.disk_clock);
         }
         if events.cpu_latch && self.cpu.rdy {
             let address = self.cpu.addr;

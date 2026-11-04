@@ -3,10 +3,18 @@
 version = 4
 
 [[package]]
+name = "emu198x-apple-disk-ii"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fa4f7d213ddf30e3379a353aca9769b8885e772dc395dadfcd9aaf9ebc1d983f"
+
+[[package]]
 name = "emu198x-machine-apple-ii-rev0-ntsc"
 version = "0.1.0"
 dependencies = [
+ "emu198x-apple-disk-ii",
  "emu198x-mos-6502",
+ "format198x-apple-ii-woz",
 ]
 
 [[package]]
@@ -17,6 +25,12 @@ checksum = "c611264b627b4afdd7b9a154b43fe9e6d100626973d09a3b35c91563d5490d8c"
 dependencies = [
  "serde",
 ]
+
+[[package]]
+name = "format198x-apple-ii-woz"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b8b0d9fdd144b0f0557de6f629eb0040f03a34b285231d18b96865d87be3b79e"
 
 [[package]]
 name = "proc-macro2"

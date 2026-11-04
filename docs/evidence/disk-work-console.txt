@@ -1,0 +1,169 @@
+Boot PC=fd1d status=Some(Status { data: 2, sequencer_address: 176, selected_drive: 0, motor_on: false, phases: 0, q6: false, q7: false, quarter_tracks: [84, 0], bit_positions: [35475, 0], bit_reads: [2251648, 0], bit_writes: [0, 0] })
+                                        
+               APPLE II                 
+                                        
+    DOS VERSION 3.3  SYSTEM MASTER      
+                                        
+                                        
+            JANUARY 1, 1983             
+                                        
+                                        
+COPYRIGHT APPLE COMPUTER,INC. 1980,1982 
+                                        
+>                                       
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+               APPLE II                 
+                                        
+    DOS VERSION 3.3  SYSTEM MASTER      
+                                        
+                                        
+            JANUARY 1, 1983             
+                                        
+                                        
+COPYRIGHT APPLE COMPUTER,INC. 1980,1982 
+                                        
+>10 PRINT 6*7                           
+>                                       
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+               APPLE II                 
+                                        
+    DOS VERSION 3.3  SYSTEM MASTER      
+                                        
+                                        
+            JANUARY 1, 1983             
+                                        
+                                        
+COPYRIGHT APPLE COMPUTER,INC. 1980,1982 
+                                        
+>10 PRINT 6*7                           
+>20 END                                 
+>                                       
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+               APPLE II                 
+                                        
+    DOS VERSION 3.3  SYSTEM MASTER      
+                                        
+                                        
+            JANUARY 1, 1983             
+                                        
+                                        
+COPYRIGHT APPLE COMPUTER,INC. 1980,1982 
+                                        
+>10 PRINT 6*7                           
+>20 END                                 
+>SAVE DISKTEST                          
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+               APPLE II                 
+                                        
+    DOS VERSION 3.3  SYSTEM MASTER      
+                                        
+                                        
+            JANUARY 1, 1983             
+                                        
+                                        
+COPYRIGHT APPLE COMPUTER,INC. 1980,1982 
+                                        
+>10 PRINT 6*7                           
+>20 END                                 
+>SAVE DISKTEST                          
+>NEW                                    
+                                        
+>                                       
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+               APPLE II                 
+                                        
+    DOS VERSION 3.3  SYSTEM MASTER      
+                                        
+                                        
+            JANUARY 1, 1983             
+                                        
+                                        
+COPYRIGHT APPLE COMPUTER,INC. 1980,1982 
+                                        
+>10 PRINT 6*7                           
+>20 END                                 
+>SAVE DISKTEST                          
+>NEW                                    
+                                        
+>LOAD DISKTEST                          
+>                                       
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+               APPLE II                 
+                                        
+    DOS VERSION 3.3  SYSTEM MASTER      
+                                        
+                                        
+            JANUARY 1, 1983             
+                                        
+                                        
+COPYRIGHT APPLE COMPUTER,INC. 1980,1982 
+                                        
+>10 PRINT 6*7                           
+>20 END                                 
+>SAVE DISKTEST                          
+>NEW                                    
+                                        
+>LOAD DISKTEST                          
+>RUN                                    
+42                                      
+                                        
+>                                       
+                                        
+                                        
+                                        

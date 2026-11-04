@@ -265,5 +265,55 @@ The family runtime's external test uses the first two variables and runs with
 `cargo test -p emu198x-runtime-apple-ii original_rom -- --ignored`.
 These tests fail if requested without fixtures. Temporary process fixtures and
 exports are removed by their test guards. No proprietary bytes are committed.
-Snapshot/restore remain explicit unsupported operations; a native window,
-later boards, cassette and protected-flux qualification are still future work.
+Snapshot/restore remain explicit unsupported operations; later boards,
+cassette and protected-flux qualification are still future work.
+
+## Shared native window (2026-11-04)
+
+The suite's `emu198x-apple-ii` now uses the existing `emu198x-ui` launcher and
+host. Runtime 0.1.1 states NTSC composite output at the existing 14M serializer
+clock, using the shell's raster-derived geometry. There is no new event loop,
+audio backend or machine clock. UI is the default feature; headless builds use
+`--no-default-features` and keep the same script/MCP executor.
+
+With the original ROM, normalized glyphs, original P5/P6 and DOS WOZ identified
+above, the macOS native window was exercised through UI automation:
+
+- At Monitor, `E000G` / Return entered Integer BASIC. `PRINT 6*7` displayed `42`.
+- Separate commands `GR`, `COLOR=1`, `HLIN 0,39 AT 10` displayed a magenta line
+  with the lower four text rows. A colon-joined direct command gave the ROM's
+  `*** SYNTAX ERR`; separate commands succeeded.
+- The existing graphics-test POKEs (`8192,85`, `8193,42`, `-16297,0`,
+  `-16304,0`, `-16302,0`) displayed the hi-res pattern. `TEXT` restored text.
+- Machine-menu Pause added `Paused` to the title; resuming removed it. Reset
+  returned to Monitor while retaining the RAM display contents.
+- `C600G` / Return booted the startup WOZ and displayed `DOS VERSION 3.3
+  SYSTEM MASTER`. `PRINT "NATIVE UI"` then displayed `NATIVE UI`.
+
+The host-layout character path was exercised with `*`, quotes, commas, equals
+and negative numbers. The deliberate left-Alt/Option target-Ctrl chord remains
+a narrower qualification: adapter tests verify its names produce keyboard
+latch byte `0x82` for Ctrl+B, and shared UI tests cover physical modifier
+ownership. The native automation tool did not deliver a physical Alt event.
+A temporary trace showed `KeyB Character("∫")` with aggregate `ALT`, then its
+release, without `AltLeft` down/up. The original chord therefore did not enter
+BASIC in that automated check. Winit's macOS `update_modifiers` only emits
+physical modifier input for a nonzero-keycode `flagsChanged` event. No fallback
+that conflates left Alt with right Alt/AltGr was introduced. The trace was
+removed; physical-keyboard Alt+B has not been tested by a person.
+
+Authored-firmware adapter tests check encoded keyboard latch bytes, video
+dimensions/bytes, varying 48 kHz mono audio packets, crystal-derived pacing
+and nonzero RAM/time retention across reset. All three pass; the two existing
+fixture-free process tests pass with UI enabled and disabled. All 42 shared UI
+unit tests pass, as do both external-ROM script/MCP tests. The first external
+invocation used relative fixture paths and failed with `No such file or
+directory`; the absolute-path invocation above passes. Formatting and Clippy
+pass for both feature configurations. Family tests and CI pass, including the
+95% coverage gate, for the runtime metadata release.
+
+The sandboxed launch reported `OSStatus: 560947818` opening the default audio
+device. The desktop-access launch opened it without that warning. Packet
+delivery and device opening are verified separately; audible sound was not
+measured. Save states remain unsupported, including through the inherited
+State menu. No later-board or analogue fidelity claim follows from this check.

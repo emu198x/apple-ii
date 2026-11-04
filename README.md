@@ -7,8 +7,9 @@ with 48 KB fitted, running the original Monitor and Integer BASIC through the
 published `emu198x-mos-6502` core.
 
 The machine and runtime are published libraries. The Emu198x suite supplies
-`emu198x-apple-ii`, a headless runner with shared JSON scripts and stdio MCP.
-A native window is a later milestone. II+, IIe and subsequent boards
+`emu198x-apple-ii`, with the shared native UI, JSON scripts and stdio MCP.
+Runtime 0.1.1 also exposes the NTSC raster geometry to every host.
+II+, IIe and subsequent boards
 will have their own machine crates here; shared hardware will be extracted when
 the second board needs it.
 
@@ -34,7 +35,7 @@ The revision-0 constructor does not synthesize a power-on RESET circuit. Call
 `reset()` to press RESET. RAM and latch initialization is deterministic rather
 than a simulation of analogue power-up randomness.
 
-Cassette transport, game peripherals, optional ROM cards, save states and native host integration belong
+Cassette transport, game peripherals, optional ROM cards and save states belong
 to later milestones. Audio is a raw digital level, not a speaker/acoustic model.
 Text flashing uses a nominal 2 Hz presentation oscillator; its analogue circuit
 has not been measured. Colour uses a reference four-bit square filter and

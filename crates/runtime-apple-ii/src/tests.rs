@@ -44,6 +44,19 @@ impl AudioSink for Audio {
     }
 }
 #[test]
+fn television_geometry_uses_the_serializer_clock_without_depending_on_crop() {
+    let m = runtime(&[], false);
+    let display = m.display().expect("NTSC television");
+    let emu198x_shell::display::Display::Television { pixel_clock_hz, .. } = display else {
+        panic!("original board emits composite video");
+    };
+    assert_eq!(pixel_clock_hz, m.profile().clock.rate.numerator_hz as f64);
+    let par = display.pixel_aspect_ratio(560, 192);
+    assert!((0.42..0.44).contains(&par));
+    assert_eq!(par, display.pixel_aspect_ratio(280, 192));
+}
+
+#[test]
 fn native_frames_exact_ticks_and_audio_share_one_clock() {
     let mut m = runtime(&[], false);
     let mut video = Video::default();

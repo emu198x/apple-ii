@@ -64,6 +64,7 @@ pub struct AppleII {
     timing: timing::Timing,
     video: video::Video,
     master_clock: u64,
+    instruction_boundaries: u64,
     frames: u64,
     keyboard: u8,
     speaker: bool,
@@ -92,6 +93,7 @@ impl AppleII {
             timing: timing::Timing::default(),
             video: video::Video::new(glyphs),
             master_clock: 0,
+            instruction_boundaries: 0,
             frames: 0,
             keyboard: 0,
             speaker: false,
@@ -147,6 +149,20 @@ impl AppleII {
     }
     pub fn cpu(&self) -> &M6502 {
         &self.cpu
+    }
+
+    /// Debugger write to fitted RAM only. ROM, I/O and card space are ignored.
+    /// Does not advance time or select any hardware switch.
+    pub fn poke(&mut self, address: u16, value: u8) {
+        if let Some(byte) = self.ram.get_mut(usize::from(address)) {
+            *byte = value;
+        }
+    }
+
+    /// Completed CPU boundaries observed after their bus access has latched.
+    /// Includes completion of RESET; remains monotonic across RESET key presses.
+    pub fn instruction_boundary_count(&self) -> u64 {
+        self.instruction_boundaries
     }
     pub fn speaker_level(&self) -> bool {
         self.speaker
@@ -254,6 +270,9 @@ impl AppleII {
                 data,
                 read,
             });
+            if self.cpu.instruction_complete() && !self.cpu.halted {
+                self.instruction_boundaries = self.instruction_boundaries.saturating_add(1);
+            }
         }
         self.video.tick();
         self.sample_ticks += 1;

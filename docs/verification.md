@@ -344,4 +344,34 @@ many 96,256-sample windows with zero missing samples. For example, an idle
 optimisation alone does not resolve the playback defect; the person repeated
 the listening check and still reported crackling. No buffering or
 hardware/filter change is included in this verification change; native audio
-remains an open defect pending a shared playback-buffer design.
+remained an open defect at that stage. The user subsequently approved the
+small shared reserve described below.
+
+### Shared native playback reserve
+
+The shared shell patch 0.44.3 waits for approximately 50 ms of output audio
+before starting playback, after clear/reset and after an underrun. The caller's
+existing maximum caps the reserve. A normal underrun retains complete queued
+frames while waiting to recover; stereo channels remain aligned. Oversized
+packets are trimmed before extending storage, and a callback larger than the
+whole queue can consume available frames and recover on later callbacks.
+
+Six native queue tests cover delayed stereo delivery, output-format thresholds,
+starvation/recovery, clear with unsigned PCM silence, large callbacks, and
+bounded overflow. Restoring immediate consumption makes the delayed-delivery
+test fail with `wait for the reserve`, `[1.0, -1.0]` instead of `[0.0, 0.0]`.
+Restoring priming passes. All 306 shared-shell unit tests, shell Clippy,
+formatting and generated status checks pass.
+
+The instrumented optimised native run selected 48 kHz stereo: 4,800 interleaved
+samples for the reserve and 24,000 for the existing maximum. Counters separated
+startup/recovery priming from callbacks that ran short after priming. Long
+sequences of callbacks had no underruns, but some underruns were still observed
+with host activity. This is not a controlled before/after rate comparison or a
+guarantee of uninterrupted playback through arbitrary host stalls. The finite
+approximately 1 kHz Monitor workload was extended to about eight seconds for a
+repeat listening check. The report from that check is pending.
+
+[Native callback evidence](evidence/native-audio-reserve.txt) retains all
+completed measurement windows and defines the counters. The task window was
+stopped after the test; its temporary bundle and caches are disposable.

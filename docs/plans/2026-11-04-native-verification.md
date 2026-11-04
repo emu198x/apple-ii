@@ -39,7 +39,8 @@ clear removes the confusing startup glyphs. Audible playback fails in debug
 and optimised builds; measured host queue underruns remain an open defect.
 The temporary keyboard and callback traces are removed from source.
 
-Proposed follow-up, awaiting agreement under flagship RULES.md §31: retain
+Follow-up approved by the user on 4 November 2026 under flagship RULES.md §31:
+retain
 approximately 50 ms of audio in the existing shared native output queue before
 starting/resuming consumption. Keep the existing bounded maximum, re-prime on
 clear/reset or starvation, and derive thresholds from output sample rate and
@@ -48,7 +49,7 @@ Test ordered stereo output under delayed packet delivery, initial buffering,
 reset/clear, sustained starvation, recovery and bounded overflow. Show
 that delayed-delivery regression fails with immediate consumption restored.
 Repeat the native tone/listening check in an optimised build before claiming
-the crackling is fixed. A larger configurable buffer is the alternative.
+the crackling is fixed. The agreed approach uses the small shared reserve.
 
 A repeat build hit `No space left on device (os error 28)`. Task-owned release
 and incremental caches were removed after stopping the test window; unrelated

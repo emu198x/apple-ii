@@ -1,7 +1,7 @@
 # Verify the merged Apple II window
 
 This verifies the agreed shared-UI design; it adds no dependencies or new
-machine behavior. Preserve the unrelated untracked files in the suite/docs.
+machine behaviour. Preserve the unrelated untracked files in the suite/docs.
 
 1. Recheck the merged `crates/emu198x-apple-ii/src/ui.rs` adapter, shared input
    routing and `emu198x-shell/src/audio.rs` output path. Run the existing binary,
@@ -9,7 +9,7 @@ machine behavior. Preserve the unrelated untracked files in the suite/docs.
    0.1.1, with normal and headless feature configurations.
 2. Extend `crates/emu198x-apple-ii/src/ui/tests.rs` with an authored, audible
    speaker loop. Check the captured signal's frequency, range and sample count
-   against elapsed master-clock time, rather than merely nonconstant samples.
+   against elapsed master-clock time, rather than only nonconstant samples.
    Check that releasing target Ctrl restores ordinary letters.
 3. Rebuild and open the real native window using the recorded original ROM,
    glyphs, P5/P6 and DOS startup image. Use Monitor to install a short authored
@@ -45,7 +45,7 @@ starting/resuming consumption. Keep the existing bounded maximum, re-prime on
 clear/reset or starvation, and derive thresholds from output sample rate and
 channel count. Exact files: `crates/emu198x-shell/src/audio.rs` and its tests.
 Test ordered stereo output under delayed packet delivery, initial buffering,
-reset/clear, sustained starvation, recovery and bounded overflow. Demonstrate
+reset/clear, sustained starvation, recovery and bounded overflow. Show
 that delayed-delivery regression fails with immediate consumption restored.
 Repeat the native tone/listening check in an optimised build before claiming
 the crackling is fixed. A larger configurable buffer is the alternative.

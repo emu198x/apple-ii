@@ -339,7 +339,7 @@ with unrelated I/O makes the tone test fail with `tone is 0 Hz`; restoring the
 access passes. Neither test establishes physical audibility.
 
 The optimised release build also showed intermittent queue underruns, despite
-many one-second windows with zero missing samples. For example, an idle
+many 96,256-sample windows with zero missing samples. For example, an idle
 96,256-sample window missed 480 samples, and another missed 6,590. Debug
 optimisation alone does not resolve the playback defect; the person repeated
 the listening check and still reported crackling. No buffering or

@@ -1,0 +1,22 @@
+
+running 1 test
+test video::tests::lores_circulates_all_patterns_with_continuous_phase_and_selects_nibbles ... FAILED
+
+failures:
+
+---- video::tests::lores_circulates_all_patterns_with_continuous_phase_and_selects_nibbles stdout ----
+
+thread 'video::tests::lores_circulates_all_patterns_with_continuous_phase_and_selects_nibbles' (238267611) panicked at crates/machine-apple-ii-rev0-ntsc/src/video.rs:191:17:
+nibble=1, y=0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    video::tests::lores_circulates_all_patterns_with_continuous_phase_and_selects_nibbles
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+   Compiling emu198x-machine-apple-ii-rev0-ntsc v0.1.0 (/Users/stevehill/Projects/198x/Emu198x/apple-ii/crates/machine-apple-ii-rev0-ntsc)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.23s
+     Running unittests src/lib.rs (target/debug/deps/emu198x_machine_apple_ii_rev0_ntsc-122d76e92b537e40)
+error: test failed, to rerun pass `--lib`

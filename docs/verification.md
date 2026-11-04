@@ -82,11 +82,84 @@ strobe alone does not mean a command has completed.
 
 No running-reference differential trace, original-hardware capture, authentic
 revision-0 character-mask verification, analogue flash/composite/speaker
-measurement, native window/input/audio-device check, graphics or Disk II
-qualification is claimed. The existing CPU's qualification is not proof of
+measurement, native window/input/audio-device check, Disk II qualification is claimed. Graphics evidence is recorded below. The existing CPU's qualification is not proof of
 all Apple II board behaviour. See README for the exact implemented surface.
 
 The umbrella repo-map check accepts this repository's entry. Its full run
 still exits 1 for eight unrelated unmapped workspaces/repos; running the check
 against the umbrella's unchanged HEAD map, excluding this newly created repo,
 reproduced the same eight problems. No unrelated workspaces were changed.
+
+## Graphics milestone
+
+The revision-0 machine now renders text, lo-res, hi-res and mixed mode from
+live fetches on either page. The existing 280×192 monochrome API is preserved;
+`colour_framebuffer()` adds a 560×192 nominal colour presentation.
+
+The same identified original ROM executes `GR`, `COLOR=15`, `PLOT 2,2`,
+`HLIN 4,8 AT 4` and `VLIN 6,10 AT 10`. The external test checks the resulting
+RAM and white PICTURE output. Typed `POKE` commands select hi-res and verify
+alternating dots, followed by a D7-only change that leaves the raster unchanged.
+`TEXT` restores the console and `PRINT 9*9` produces `81`.
+[Both firmware tests pass](evidence/graphics-rom.txt).
+
+Two test-workload corrections came from observing the ROM:
+
+- `GR` takes longer than the former keyboard wait. The next `C` was accepted
+  after 1,947,935 master ticks **in addition to** the preceding 1,000,000-tick
+  settling interval, about 206 ms in total. The console and firmware helper now
+  allow one emulated second for acknowledgement, retaining a finite failure.
+- Integer BASIC reports `*** >32767 ERR` for `POKE 49239,0` and the other
+  unsigned I/O addresses. The workload uses signed equivalents (`-16297`,
+  `-16304`, `-16302`). No optional Programmer's Aid ROM or Applesoft `HGR`
+  command is assumed. The first VLIN assertion also had the wrong folded RAM
+  address; row 6 of lo-res uses text row 3, address `$058A` at column 10.
+
+The example exported these colour rasters; both were visually inspected.
+The lo-res program draws all sixteen colours and retains mixed-mode text.
+The hi-res workload types a small caller-owned 6502 fill routine into RAM,
+executes it with BASIC's `CALL`, and selects full hi-res through `POKE`.
+It fills the page with `$55`, producing violet/green strips and white joins.
+This routine is test code, not firmware.
+
+![Sixteen lo-res colours above the mixed-mode prompt](evidence/lores-colour.png)
+
+![Revision-0 hi-res alternating dots](evidence/hires-colour.png)
+
+Reproduce with the existing ROM environment variables, choosing a new PPM path:
+
+```sh
+cargo run --example boot -- "$EMU198X_APPLE_II_ROM" "$EMU198X_APPLE_II_CHARS" /tmp/lores.ppm --colour < docs/evidence/lores-input.bas
+cargo run --example boot -- "$EMU198X_APPLE_II_ROM" "$EMU198X_APPLE_II_CHARS" /tmp/hires.ppm --colour < docs/evidence/hires-input.bas
+```
+
+The [lo-res console](evidence/lores-console.txt), [hi-res console](evidence/hires-console.txt)
+and typed input files retain the workloads. The console prints text RAM even
+while graphics is selected; the exported raster is the actual display output.
+Text colour fringes reflect revision 0's persistent colour burst.
+
+Final checks cover 22 fixture-free tests and two explicit external-ROM tests,
+plus format, Clippy and the example build. [Coverage](evidence/graphics-coverage.txt)
+is 97.92% (564/576 lines), above the unchanged 95% floor. Coverage includes test
+code and is not an accuracy measurement. New invariants cover all 7,680 visible
+hi-res byte addresses on each page, all lo-res patterns and nibble halves,
+D7 invariance for all 128 hi-res patterns, both modes/pages with mixed selection
+at line 160, and RAM changes after a fetch appearing only on the next pass.
+
+The square-filter fixture generator reproduces 64 window/phase cases and a
+560-sample row crossing byte boundaries and right-edge blanking. Build it with
+an existing C++17 compiler; it adds no build/runtime dependency:
+
+```sh
+c++ -std=c++17 -Wall -Wextra -Werror tools/reference-square-filter.cpp -o /tmp/apple-ii-reference
+/tmp/apple-ii-reference /tmp/square.csv /tmp/row.csv
+cmp /tmp/square.csv crates/machine-apple-ii-rev0-ntsc/tests/fixtures/mame-square-filter.csv
+cmp /tmp/row.csv crates/machine-apple-ii-rev0-ntsc/tests/fixtures/mame-square-filter-row.csv
+```
+
+Removing lo-res's odd-byte phase correction demonstrably fails with
+`nibble=1, y=0`; [negative-test output](evidence/negative-lores-phase.txt)
+is retained. The mutation was restored before the clean checks. This is
+function-level reference agreement, not a running-MAME differential trace or
+an analogue display qualification. Disk II and native host integration remain
+future milestones.

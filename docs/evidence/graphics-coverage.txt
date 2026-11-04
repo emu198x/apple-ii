@@ -1,0 +1,59 @@
+info: cargo-llvm-cov currently setting cfg(coverage); you can opt-out it by passing --no-cfg-coverage
+   Compiling emu198x-machine-apple-ii-rev0-ntsc v0.1.0 (/Users/stevehill/Projects/198x/Emu198x/apple-ii/crates/machine-apple-ii-rev0-ntsc)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.61s
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/emu198x_machine_apple_ii_rev0_ntsc-4f3f4eab09b1d18a)
+
+running 12 tests
+test colour::tests::every_phase_and_window_matches_the_reference_fixture ... ok
+test timing::tests::each_video_latch_precedes_its_cpu_latch ... ok
+test timing::tests::every_visible_hires_address_matches_the_folded_rows_on_both_pages ... ok
+test video::tests::hires_is_lsb_first_and_d7_never_delays_revision_zero_dots ... ok
+test video::tests::flashing_inverts_with_oscillator_level_but_normal_text_does_not ... ok
+test video::tests::mode_changes_affect_the_next_fetch_without_reinterpreting_latched_bits ... ok
+test video::tests::lores_circulates_all_patterns_with_continuous_phase_and_selects_nibbles ... ok
+test timing::tests::scanner_matches_text_coordinates_and_scans_blank_memory ... ok
+test video::tests::streaming_decoder_matches_reference_across_bytes_and_right_blanking ... ok
+test tests::scanner_holds_fetched_byte_until_next_pass_despite_later_ram_write ... ok
+test tests::graphics_ram_writes_do_not_repaint_already_scanned_pixels ... ok
+test timing::tests::crystal_network_has_65_cpu_cycles_and_912_ticks_per_line ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
+
+     Running tests/foundation.rs (target/llvm-cov-target/debug/deps/foundation-dd6d9edf6e030527)
+
+running 8 tests
+test text_folds_are_unique_and_match_known_row_starts ... ok
+test empty_slots_and_empty_rom_sockets_read_live_scanner_data ... ok
+test keyboard_writes_are_ignored_but_strobe_clear_writes_work ... ok
+test speaker_observes_read_and_both_nmos_rmw_writes ... ok
+test reset_fetches_vector_executes_rom_and_cannot_overwrite_it ... ok
+test keyboard_latch_mirrors_and_clear_strobe_keep_character_bits ... ok
+test audio_sample_count_and_levels_follow_elapsed_master_time ... ok
+test text_pixels_follow_rom_glyphs_inverse_codes_and_page_selection ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+
+     Running tests/graphics.rs (target/llvm-cov-target/debug/deps/graphics-c7ffef7d57e577ef)
+
+running 2 tests
+test cpu_selects_both_lores_pages_and_reset_keeps_the_video_latches ... ok
+test cpu_selects_both_pages_in_both_graphics_modes_with_mixed_text_at_line_160 ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.85s
+
+     Running tests/rom_boot.rs (target/llvm-cov-target/debug/deps/rom_boot-f66785f25e9a880e)
+
+running 2 tests
+test integer_basic_draws_lores_and_switches_hires_through_real_io ... ignored, external original E000 ROM and 64-glyph bitmap; see README
+test original_monitor_enters_integer_basic_and_runs_programs ... ignored, external original E000 ROM and 64-glyph bitmap; see README
+
+test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+Filename                      Regions    Missed Regions     Cover   Functions  Missed Functions  Executed       Lines      Missed Lines     Cover    Branches   Missed Branches     Cover
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+colour.rs                          42                 0   100.00%           4                 0   100.00%          21                 0   100.00%           0                 0         -
+lib.rs                            288                15    94.79%          21                 3    85.71%         211                11    94.79%           0                 0         -
+timing.rs                         294                 1    99.66%          14                 0   100.00%         157                 0   100.00%           0                 0         -
+video.rs                          302                 2    99.34%          16                 0   100.00%         187                 1    99.47%           0                 0         -
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                             926                18    98.06%          55                 3    94.55%         576                12    97.92%           0                 0         -

@@ -150,6 +150,15 @@ impl AppleIIRuntime {
     }
 }
 impl MachineCore for AppleIIRuntime {
+    fn display(&self) -> Option<emu198x_shell::display::Display> {
+        // Colour output retains one sample per 14M serializer tick in every
+        // mode (docs/hardware.md, Graphics signal and presentation).
+        Some(emu198x_shell::display::Display::Television {
+            region: emu198x_shell::Region::Ntsc,
+            pixel_clock_hz: emu198x_machine_apple_ii_rev0_ntsc::MASTER_HZ as f64,
+            lines_per_tv_height: emu198x_shell::display::NTSC_ACTIVE_LINES,
+        })
+    }
     fn profile(&self) -> &MachineProfile {
         &self.profile
     }

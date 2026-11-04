@@ -106,3 +106,27 @@ chroma/luma bandwidth, NTSC voltage levels, a television, or analogue ringing.
 functions. Its 64 window/phase cases and 560-sample boundary row are checked
 into the machine's `tests/fixtures/` directory. They qualify the decoder
 against those reference functions, not the entire emulator against running MAME.
+
+## Disk II
+
+Sather ch.9 and `apple-ii-disk-ii-teaching.md` describe the P5 bootstrap, P6
+logic sequencer, soft switches, drive coils and write-protection sensing. The
+new primary note `woz-2-bitstream-format.md` cites John K. Morris's official
+[WOZ 2.1 reference](https://applesaucefdc.com/woz/reference2/).
+
+The peripheral follows MAME snapshot
+`9391e1eff80eb04abd58d48218a1d3b9643c1ea8`, `wozfdc.cpp` for the PROM truth
+table, even-address data enable and motor-off delay; `floppy.cpp` supplies the
+instantaneous equilibrium stepper precedent. BSD attribution accompanies that
+library. MiSTer's `disk_ii.vhd` was consulted for host-clock precedent, not used
+to replace media with byte-at-a-time bus reads.
+
+The machine supplies its existing Q3 falling edge: 130 edges per 912-tick scan
+line. I/O selection occurs at PHI0 rise, before intervening sequencer edges;
+the CPU samples card data at its normal data-latch phase. Neither `select` nor
+`data` advances time. Debugger peeks never select a soft switch.
+
+[disk-fixtures.json](disk-fixtures.json) records exact PROM, media and converter
+identities. P5 CRC32 `ce7144f6` and P6 `b72a2c70` match MAME's recorded identities.
+An initial download labelled P5A had CRC `833256ff` and was excluded from this
+qualification. All ROMs and archival disk bytes remain outside git.

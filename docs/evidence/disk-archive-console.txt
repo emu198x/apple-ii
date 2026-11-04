@@ -1,0 +1,217 @@
+Boot PC=fd1d status=Some(Status { data: 2, sequencer_address: 176, selected_drive: 0, motor_on: false, phases: 0, q6: false, q7: false, quarter_tracks: [84, 0], bit_positions: [35475, 0], bit_reads: [2251648, 0], bit_writes: [0, 0] })
+                                        
+               APPLE II                 
+                                        
+    DOS VERSION 3.3  SYSTEM MASTER      
+                                        
+                                        
+            JANUARY 1, 1983             
+                                        
+                                        
+COPYRIGHT APPLE COMPUTER,INC. 1980,1982 
+                                        
+>                                       
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+>CATALOG                                
+                                        
+DISK VOLUME 254                         
+                                        
+*A 003 HELLO                            
+*I 003 APPLESOFT                        
+*B 006 LOADER.OBJ0                      
+*B 042 FPBASIC                          
+*B 042 INTBASIC                         
+*A 003 MASTER                           
+*B 009 MASTER CREATE                    
+*I 009 COPY                             
+*B 003 COPY.OBJ0                        
+*A 009 COPYA                            
+*B 003 CHAIN                            
+*A 014 RENUMBER                         
+*A 003 FILEM                            
+*B 020 FID                              
+*A 003 CONVERT13                        
+*B 027 MUFFIN                           
+*A 003 START13                          
+*B 007 BOOT13                           
+                                        
+DISK VOLUME 254                         
+                                        
+*A 003 HELLO                            
+*I 003 APPLESOFT                        
+*B 006 LOADER.OBJ0                      
+*B 042 FPBASIC                          
+*B 042 INTBASIC                         
+*A 003 MASTER                           
+*B 009 MASTER CREATE                    
+*I 009 COPY                             
+*B 003 COPY.OBJ0                        
+*A 009 COPYA                            
+*B 003 CHAIN                            
+*A 014 RENUMBER                         
+*A 003 FILEM                            
+*B 020 FID                              
+*A 003 CONVERT13                        
+*B 027 MUFFIN                           
+*A 003 START13                          
+*B 007 BOOT13                           
+*A 004 SLOT#                            
+                                        
+>0 PRINT 6*7                            
+>                                       
+                                        
+*A 003 HELLO                            
+*I 003 APPLESOFT                        
+*B 006 LOADER.OBJ0                      
+*B 042 FPBASIC                          
+*B 042 INTBASIC                         
+*A 003 MASTER                           
+*B 009 MASTER CREATE                    
+*I 009 COPY                             
+*B 003 COPY.OBJ0                        
+*A 009 COPYA                            
+*B 003 CHAIN                            
+*A 014 RENUMBER                         
+*A 003 FILEM                            
+*B 020 FID                              
+*A 003 CONVERT13                        
+*B 027 MUFFIN                           
+*A 003 START13                          
+*B 007 BOOT13                           
+*A 004 SLOT#                            
+                                        
+>0 PRINT 6*7                            
+>20 END                                 
+>                                       
+*A 003 HELLO                            
+*I 003 APPLESOFT                        
+*B 006 LOADER.OBJ0                      
+*B 042 FPBASIC                          
+*B 042 INTBASIC                         
+*A 003 MASTER                           
+*B 009 MASTER CREATE                    
+*I 009 COPY                             
+*B 003 COPY.OBJ0                        
+*A 009 COPYA                            
+*B 003 CHAIN                            
+*A 014 RENUMBER                         
+*A 003 FILEM                            
+*B 020 FID                              
+*A 003 CONVERT13                        
+*B 027 MUFFIN                           
+*A 003 START13                          
+*B 007 BOOT13                           
+*A 004 SLOT#                            
+                                        
+>0 PRINT 6*7                            
+>20 END                                 
+>SAVE DISKTEST                          
+                                        
+*A 003 MASTER                           
+*B 009 MASTER CREATE                    
+*I 009 COPY                             
+*B 003 COPY.OBJ0                        
+*A 009 COPYA                            
+*B 003 CHAIN                            
+*A 014 RENUMBER                         
+*A 003 FILEM                            
+*B 020 FID                              
+*A 003 CONVERT13                        
+*B 027 MUFFIN                           
+*A 003 START13                          
+*B 007 BOOT13                           
+*A 004 SLOT#                            
+                                        
+>0 PRINT 6*7                            
+>20 END                                 
+>SAVE DISKTEST                          
+                                        
+WRITE PROTECTED                         
+                                        
+>NEW                                    
+                                        
+>                                       
+*A 009 COPYA                            
+*B 003 CHAIN                            
+*A 014 RENUMBER                         
+*A 003 FILEM                            
+*B 020 FID                              
+*A 003 CONVERT13                        
+*B 027 MUFFIN                           
+*A 003 START13                          
+*B 007 BOOT13                           
+*A 004 SLOT#                            
+                                        
+>0 PRINT 6*7                            
+>20 END                                 
+>SAVE DISKTEST                          
+                                        
+WRITE PROTECTED                         
+                                        
+>NEW                                    
+                                        
+>LOAD DISKTEST                          
+                                        
+FILE NOT FOUND                          
+                                        
+>                                       
+*A 014 RENUMBER                         
+*A 003 FILEM                            
+*B 020 FID                              
+*A 003 CONVERT13                        
+*B 027 MUFFIN                           
+*A 003 START13                          
+*B 007 BOOT13                           
+*A 004 SLOT#                            
+                                        
+>0 PRINT 6*7                            
+>20 END                                 
+>SAVE DISKTEST                          
+                                        
+WRITE PROTECTED                         
+                                        
+>NEW                                    
+                                        
+>LOAD DISKTEST                          
+                                        
+FILE NOT FOUND                          
+                                        
+>RUN                                    
+*** NO END ERR                          
+>                                       
+*** NO END ERR                          
+>CATALOG                                
+                                        
+DISK VOLUME 254                         
+                                        
+*A 003 HELLO                            
+*I 003 APPLESOFT                        
+*B 006 LOADER.OBJ0                      
+*B 042 FPBASIC                          
+*B 042 INTBASIC                         
+*A 003 MASTER                           
+*B 009 MASTER CREATE                    
+*I 009 COPY                             
+*B 003 COPY.OBJ0                        
+*A 009 COPYA                            
+*B 003 CHAIN                            
+*A 014 RENUMBER                         
+*A 003 FILEM                            
+*B 020 FID                              
+*A 003 CONVERT13                        
+*B 027 MUFFIN                           
+*A 003 START13                          
+*B 007 BOOT13                           
+                                        

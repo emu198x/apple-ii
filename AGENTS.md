@@ -4,7 +4,8 @@ Read the umbrella PRINCIPLES.md first. This repository follows the flagship's
 RULES.md and knowledge/decisions/, especially cpu-bus-interface.md,
 each-machine-has-its-own-machine-crate.md and workspace-shape.md. Current plans
 live in docs/plans/; consult 2026-11-04-revision-zero-graphics.md alongside the
-foundation plan.
+foundation plan. The Disk II milestone and qualification live in
+docs/plans/2026-11-04-disk-ii.md and docs/verification.md.
 
 One machine crate per board, published with the emu198x- prefix. This first
 slice is original NTSC revision 0 with 48 KB fitted. Do not put II+, IIe or

@@ -9,6 +9,8 @@ publish = false
 
 [dependencies]
 emu198x-mos-6502 = "0.6.1"
+emu198x-apple-disk-ii = "0.1.0"
+format198x-apple-ii-woz = "0.1.0"
 
 [lints]
 workspace = true

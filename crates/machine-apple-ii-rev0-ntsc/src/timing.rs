@@ -13,6 +13,7 @@ pub(crate) struct Events {
     pub cpu_start: bool,
     pub cpu_latch: bool,
     pub scan_advance: bool,
+    pub disk_clock: bool,
 }
 
 pub(crate) struct Timing {
@@ -70,6 +71,7 @@ impl Timing {
             cpu_start: !p && phi0,
             cpu_latch: latch && p,
             scan_advance: r && !p && !q,
+            disk_clock: q && !q3,
         };
         self.color_ref = k ^ c;
         self.clk7 = !k;
@@ -140,10 +142,14 @@ mod tests {
     fn crystal_network_has_65_cpu_cycles_and_912_ticks_per_line() {
         let mut timing = Timing::default();
         let mut starts = Vec::new();
+        let mut disk_edges = Vec::new();
         let mut line_edges = Vec::new();
         let mut frame_edges = Vec::new();
         for tick in 0..500_000 {
             let events = timing.tick();
+            if events.disk_clock {
+                disk_edges.push(tick);
+            }
             if events.cpu_start {
                 starts.push(tick);
             }
@@ -167,6 +173,13 @@ mod tests {
                 .filter(|&t| t >= window[0] && t < window[1])
                 .collect();
             assert_eq!(cycles.len(), 65);
+            assert_eq!(
+                disk_edges
+                    .iter()
+                    .filter(|&&t| t >= window[0] && t < window[1])
+                    .count(),
+                130
+            );
             let lengths: Vec<_> = cycles.windows(2).map(|w| w[1] - w[0]).collect();
             assert!(lengths.iter().all(|&period| period == 14 || period == 16));
             assert_eq!(lengths.iter().filter(|&&period| period == 16).count(), 1);

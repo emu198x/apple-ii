@@ -161,5 +161,60 @@ Removing lo-res's odd-byte phase correction demonstrably fails with
 `nibble=1, y=0`; [negative-test output](evidence/negative-lores-phase.txt)
 is retained. The mutation was restored before the clean checks. This is
 function-level reference agreement, not a running-MAME differential trace or
-an analogue display qualification. Disk II and native host integration remain
-future milestones.
+an analogue display qualification. Native host integration remains a future milestone.
+
+
+## Disk II
+
+Original Monitor + Integer BASIC, the original 16-sector P5/P6 pair, and DOS
+3.3 System Master (January 1, 1983) boot through slot 6. The CPU reads every
+bootstrap byte and disk nibble: no ROM traps or sector injection. Exact inputs
+are in [disk-fixtures.json](disk-fixtures.json) and the existing [ROM manifest](fixtures.json).
+
+The external tests boot an authored sector, print `DISK II BOOT OK` through
+Monitor COUT and observe its `$0300 = $42` marker. `tools/diagnostic-disk.py`
+creates the source DSK. Convert it with Ben Zotto's
+[dsk2woz2](https://github.com/bzotto/dsk2woz2/tree/97a2100285ab935f96708efb7e2c1a809c9fd441)
+at that pinned revision; this diagnostic tool is not a runtime dependency.
+
+The DOS test checks the boot banner, `CATALOG`/`HELLO`, protected SAVE with zero
+writes, and a writable SAVE. It exports the memory copy, parses its checksum,
+boots a fresh machine and runs `LOAD DISKTEST` / `RUN`; output is `42`.
+[External test output](evidence/disk-external-tests.txt),
+[archive console](evidence/disk-archive-console.txt),
+[work console](evidence/disk-work-console.txt) and
+[fresh exported-disk console](evidence/disk-remount-console.txt) retain the results.
+The original image remains byte-identical. The example also uses `create_new`
+when exporting, so an existing path cannot be overwritten.
+
+Set absolute paths in `EMU198X_APPLE_II_ROM`, `EMU198X_APPLE_II_CHARS`,
+`EMU198X_DISK_II_P5`, `EMU198X_DISK_II_P6`, `EMU198X_APPLE_II_DOS` and
+`EMU198X_APPLE_II_DIAGNOSTIC`, then run:
+
+```sh
+cargo test --release --test disk_boot -- --ignored --nocapture
+```
+
+The peripheral independently executes 1,024 MAME PROM update steps, covering
+read, write, data loading and protection inputs. Set `EMU198X_DISK_II_P6` and
+run its ignored trace test; the generator, pinned reference and CSV live in
+that repository. This compares functions, not a running whole-MAME machine.
+
+A negative write test restores the faulty absolute-angle placement: only 98
+of 100 adjacent transitions survive, and the regression fails. Restoring
+interval normalization passes; DOS SAVE and fresh-machine LOAD then succeed.
+Bitstream writes normalize each transition interval independently. This keeps
+ordinary DOS data but does not preserve exact angular splices or sub-cell flux.
+Stepper acceleration, settling, pulse shapes, arbitrary copy protections,
+13-sector firmware, other slots and other Apple II boards are unqualified.
+
+Final registry-release checks pass: 25 fixture-free machine tests, four explicit
+ROM/media tests, format, Clippy, examples and [98.18% line coverage](evidence/disk-coverage.txt)
+with the 95% floor unchanged. The controller has 11 fixture-free tests, its
+external P6 trace and 100% line coverage. The WOZ crate has six unit tests and
+an explicit external-image round-trip check.
+
+Disabling the host Q3 event fails the CPU-driven latch invariant (`0` instead
+of `$42`); [negative clock output](evidence/negative-disk-clock.txt) is retained.
+The event was restored before final verification. Coverage is a test-reach
+measure, not hardware-accuracy evidence.
